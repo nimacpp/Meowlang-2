@@ -1,0 +1,3 @@
+#!/usr/bin/env Meow
+Meow.puts(hello world)
+#comment
