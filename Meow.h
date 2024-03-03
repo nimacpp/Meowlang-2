@@ -15,8 +15,7 @@ class Meow
         		text = text.replace(m[1].first,m[1].second,existV(std::string(m[1].first, m[1].second),data));
 		//puts(text);
         /*smatch n;
-        if (regex_search(text, n, regex(R"((#[[:alpha:]][[:alnum:]]*))")))
-        		text = text.replace(n[1].first,n[1].second,NULL);*/
+        */
        	//puts(text);
  		regex rg_filter("@Meow(:on|:off|)");
  		regex rg_code("Meow.gets\\(([0-9,]+)\\)");
@@ -105,6 +104,7 @@ vector<string> readfile(string text){
     vector<string> lines;
     while (getline(file, line)){
     	if(line != "")
+    		
     		lines.push_back(line); 
     }
     file.close();
