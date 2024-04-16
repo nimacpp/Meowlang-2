@@ -7,7 +7,7 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.1"}};
+ 	map<string,string> data = {{"VERSION","2.0.2"}};
  	
  	void worker(string text,bool t){
  		smatch m;
@@ -21,6 +21,7 @@ class Meow
  		regex rg_code("Meow.gets\\(([0-9,]+)\\)");
  		regex rg_value("var.([a-zA-Z0-9]+) =[ ]{0,1}(.*)");
  		regex rg_ucode("Meow.puts\\((.*)\\)");
+		regex rg_system("Meow.system\\((.*)\\)");
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
 	    	regex_search(text, value,rg_code);
@@ -31,12 +32,15 @@ class Meow
 	 			cout<<char(i);
 	 		}
 	 	}
-	 	/*else if(regex_match(text,rg_ucode)){
+	 	else if(regex_match(text,rg_system)){
 	 		smatch value;
-	    	regex_search(text, value,rg_ucode);
-	    	char c = value[1].str()[0];  // Access the string representation and then the character
-            cout<<static_cast<int>(c);
-	 	}*/
+	    	regex_search(text, value,rg_system);
+	    	string s = value[1];
+			system(s.c_str());
+	 	}
+		else if(text == "exit"){
+			exit(0);
+		}
 	 	else if(regex_match(text,rg_ucode)){
 	    	smatch value;
 	    	regex_search(text, value,rg_ucode);
