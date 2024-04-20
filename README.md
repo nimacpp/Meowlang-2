@@ -8,13 +8,11 @@
 # How install for linux
 download it and run makefile like :
 ```bash
-make
 chmod +x ./install.sh
 ./install.sh
 ```
 # The most important functions
 ‍‍‍``` Meow.puts() ```
-
 
 ``` Meow.gets() ```
 
@@ -23,3 +21,5 @@ chmod +x ./install.sh
 ``` var.name = value ```
 
 ``` $namevalue ```
+
+``` @set NewHead ```

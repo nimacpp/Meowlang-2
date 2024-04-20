@@ -4,6 +4,8 @@ echo "
   ( o.o )  [Meowlang]
    > ^ <
 "
+make
+
 if [ -e "/usr/bin/Meow" ]; then
     echo "=> update ..."
 else
