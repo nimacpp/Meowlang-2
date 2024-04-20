@@ -1,6 +1,4 @@
 #!/usr/bin/env Meow
-@set Cow
-@Cow:on
-Cow.puts(ab)
-Cow.gets(112)
-#comment
+
+Meow.puts(ab)
+

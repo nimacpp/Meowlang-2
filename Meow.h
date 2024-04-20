@@ -7,7 +7,7 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.3"}};
+ 	map<string,string> data = {{"VERSION","2.0.4"}};
  	string meow = "Meow";
 
  	void worker(string text,bool t){
@@ -41,7 +41,7 @@ class Meow
 		else if(regex_match(text,rg_setting)){
 	 		smatch value;
 	    	regex_search(text, value,rg_setting);
-	    	meow = value[1]; 
+			meow = value[1];
 	 	}
 		else if(text == "exit"){
 			exit(0);
@@ -73,14 +73,18 @@ class Meow
 	    }else if(text.at(0) == '#'){
 
 	    }else if(regex_match(text,rg_value)){
-    		smatch value;
+    		smatch value;string input;
 		    regex_search(text, value,rg_value);
+			if(value[2] == meow+".input"){
+				getline(cin,input);
+			}else
+				input = value[2];
 		    if(!exist(value[1],data))
-				data.insert({value[1],value[2]});
+				data.insert({value[1],input});
 			else{
 				auto itr = data.find(value[1]);
 				if(itr != data.end()){
-					(*itr).second = value[2];
+					(*itr).second = input;
 				}
 			}
 
