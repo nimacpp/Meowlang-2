@@ -7,21 +7,21 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.2"}};
- 	
+ 	map<string,string> data = {{"VERSION","2.0.3"}};
+ 	string meow = "Meow";
+
  	void worker(string text,bool t){
  		smatch m;
  		if (regex_search(text, m, regex(R"((\$[[:alpha:]][[:alnum:]]*))")))
         		text = text.replace(m[1].first,m[1].second,existV(std::string(m[1].first, m[1].second),data));
-		//puts(text);
-        /*smatch n;
-        */
-       	//puts(text);
- 		regex rg_filter("@Meow(:on|:off|)");
- 		regex rg_code("Meow.gets\\(([0-9,]+)\\)");
+		
+
+ 		regex rg_filter("@"+meow+"(:on|:off|)");
+ 		regex rg_code(meow+".gets\\(([0-9,]+)\\)");
  		regex rg_value("var.([a-zA-Z0-9]+) =[ ]{0,1}(.*)");
- 		regex rg_ucode("Meow.puts\\((.*)\\)");
-		regex rg_system("Meow.system\\((.*)\\)");
+ 		regex rg_ucode(meow+".puts\\((.*)\\)");
+		regex rg_system(meow+".system\\((.*)\\)");
+		regex rg_setting("@set ([a-zA-Z]+)");
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
 	    	regex_search(text, value,rg_code);
@@ -37,6 +37,11 @@ class Meow
 	    	regex_search(text, value,rg_system);
 	    	string s = value[1];
 			system(s.c_str());
+	 	}
+		else if(regex_match(text,rg_setting)){
+	 		smatch value;
+	    	regex_search(text, value,rg_setting);
+	    	meow = value[1]; 
 	 	}
 		else if(text == "exit"){
 			exit(0);
@@ -89,7 +94,7 @@ string decode(string text){
 	string rtn = "";int no; 
 	for(auto a : split(text,",")){
 
-		no = split(a,"Meow").size()-1;
+		no = split(a,meow).size()-1;
 		cout<<no;
 	 	cout<<char(no);
 
@@ -159,13 +164,9 @@ inline bool exists_ (const std::string& name) {
  			cout<<"off"<<endl;
  	}void Meowput(int no){
  		if(Mood == true){
-	 		int j=0;string m = "Moew";
+	 		int j=0;
 	 		while(j < no ){
-	 			cout<<"Meow";j++;
-	 			/*for(int i=0;i<4;i++){
-	 				cout<<m[i];
-	 				j++;
-	 			}*/
+	 			cout<<meow;j++;
 	 			if(j+1 < no){
             		cout<<" ";}
 	 		}
