@@ -23,3 +23,5 @@ chmod +x ./install.sh
 ``` $namevalue ```
 
 ``` @set NewHead ```
+
+``` @set.text() ```
