@@ -7,9 +7,9 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.4"}};
+ 	map<string,string> data = {{"VERSION","2.0.5"}};
  	string meow = "Meow";
-
+	string gtext = "";
  	void worker(string text,bool t){
  		smatch m;
  		if (regex_search(text, m, regex(R"((\$[[:alpha:]][[:alnum:]]*))")))
@@ -22,6 +22,7 @@ class Meow
  		regex rg_ucode(meow+".puts\\((.*)\\)");
 		regex rg_system(meow+".system\\((.*)\\)");
 		regex rg_setting("@set ([a-zA-Z]+)");
+		regex rg_text("@set.text\\((.*)\\)");
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
 	    	regex_search(text, value,rg_code);
@@ -31,6 +32,11 @@ class Meow
 	    		i = stoi(x);
 	 			cout<<char(i);
 	 		}
+	 	}
+		else if(regex_match(text,rg_text)){
+	 		smatch value;
+	    	regex_search(text, value,rg_text);
+			gtext = value[1];
 	 	}
 	 	else if(regex_match(text,rg_system)){
 	 		smatch value;
@@ -170,8 +176,11 @@ inline bool exists_ (const std::string& name) {
  		if(Mood == true){
 	 		int j=0;
 	 		while(j < no ){
+				if(gtext != ""){
+					cout<<gtext;j++;
+				}else{
 	 			cout<<meow;j++;
-	 			if(j+1 < no){
+	 			}if(j+1 < no){
             		cout<<" ";}
 	 		}
  		}else
