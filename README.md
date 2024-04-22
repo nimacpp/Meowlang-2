@@ -16,6 +16,8 @@ chmod +x ./install.sh
 
 ``` Meow.gets() ```
 
+``` Meow.1to() ```
+
 ``` @Meow:on/off ```
 
 ``` var.name = value ```
@@ -25,3 +27,4 @@ chmod +x ./install.sh
 ``` @set NewHead ```
 
 ``` @set.text() ```
+
