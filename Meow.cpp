@@ -1,7 +1,9 @@
 #include "Meow.h"
 int main(int argc, char const *argv[])
 {
+	
 	Meow lang;
+	lang.passive();
 	for(int i=1;i< argc;i++){
 		string ag = argv[i];
 		if(lang.exists_(ag)){

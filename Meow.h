@@ -7,7 +7,7 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.5"}};
+ 	map<string,string> data = {{"VERSION","2.0.6"}};
  	string meow = "Meow";
 	string gtext = "";
  	void worker(string text,bool t){
@@ -21,8 +21,10 @@ class Meow
  		regex rg_value("var.([a-zA-Z0-9]+) =[ ]{0,1}(.*)");
  		regex rg_ucode(meow+".puts\\((.*)\\)");
 		regex rg_system(meow+".system\\((.*)\\)");
-		regex rg_setting("@set ([a-zA-Z]+)");
+		regex rg_range(meow+".1to\\(([0-9,]+)\\)");
+		regex rg_setting("@set ([a-zA-Z0-9]+)");
 		regex rg_text("@set.text\\((.*)\\)");
+
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
 	    	regex_search(text, value,rg_code);
@@ -33,6 +35,13 @@ class Meow
 	 			cout<<char(i);
 	 		}
 	 	}
+		else if(regex_match(text,rg_range)){
+			smatch value;
+	    	regex_search(text, value,rg_range);
+			Mood = true;
+			Meowput(to_i(value[1]));
+			Mood = false;
+		}
 		else if(regex_match(text,rg_text)){
 	 		smatch value;
 	    	regex_search(text, value,rg_text);
@@ -130,6 +139,21 @@ vector<string> readfile(string text){
     return lines;
 	}
 }
+void passive(){
+	string text = GetEnv("HOME");
+	text = text+"/.Meowrc";
+	ifstream file(text.c_str());
+	if(!file){
+		ofstream { text.c_str() };
+	}else{
+	string line;
+    while (getline(file, line)){
+		if(line != "")
+    	 worker(line,true);
+    }
+	}
+
+}
 void help(int v){
 	if(v == 0){
 	cout<<"Usage: Meow [--] [programfile] [arguments]\n"
@@ -165,6 +189,15 @@ inline bool exists_ (const std::string& name) {
  	map<string,int> line ;
  	bool Mood = false;
  	//int line = 0;
+	string GetEnv( const string & var ) {
+     const char * val = getenv( var.c_str() );
+     if ( val == nullptr ) { // invalid to assign nullptr to string
+         return "";
+     }
+     else {
+         return val;
+     }
+}
  	void puts(string text){
  		cout<<text<<endl;
  	}void put(bool id){
@@ -180,8 +213,9 @@ inline bool exists_ (const std::string& name) {
 					cout<<gtext;j++;
 				}else{
 	 			cout<<meow;j++;
-	 			}if(j+1 < no){
-            		cout<<" ";}
+	 			}
+			//if(j+1 < no){
+            		cout<<" ";//}
 	 		}
  		}else
  			cout<<no;
@@ -240,7 +274,11 @@ string value_system(string text){
 	}
 
 }
-
+int to_i(string str){
+	int i ;
+	istringstream ( str ) >> i;
+	return i;
+}
 vector<string> split(string s, string delimiter)
 {
 
