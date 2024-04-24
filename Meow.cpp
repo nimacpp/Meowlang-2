@@ -3,10 +3,10 @@ int main(int argc, char const *argv[])
 {
 	
 	Meow lang;
-	lang.passive();
 	for(int i=1;i< argc;i++){
 		string ag = argv[i];
 		if(lang.exists_(ag)){
+			lang.passive();
 			vector<string> s = lang.readfile(argv[i]);
 			for(int j =0;j< s.size();j++){
 				//lang.line = i;
@@ -15,6 +15,7 @@ int main(int argc, char const *argv[])
 			}
 		}
 		if(ag == "-e"){
+			lang.passive();
 			lang.worker(argv[i+1],false);
 		}else if(ag == "-h"){
  			lang.help(0);
@@ -22,11 +23,18 @@ int main(int argc, char const *argv[])
 			cout<<"Meow "<<lang.data["VERSION"]<<endl;
 		}else if((ag == "-e")&&(i+1 < argc)){
 			lang.decode(argv[i+1]);
-		}}
+		}else if(ag == "-p"){
+			lang.passive();
+			cout<<"Pointer: "+lang.meow<<endl;
+		}
+		}
 		if(!argv[1]){
 			string test;
+			cout<<"Welcome to Meow v"+lang.data["VERSION"]+"\n"
+				  "Type \".help\" for more information.\n";
+			lang.passive();
 			while(true){
-			cout<<">>> ";
+			cout<<lang.data["PS1"]+" ";
 			getline(cin,test);
 			if(!lang.terminalcmd(test))
 				lang.worker(test,false);

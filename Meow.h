@@ -7,7 +7,7 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.6"}};
+ 	map<string,string> data = {{"VERSION","2.0.7"},{"PS1",">"}};
  	string meow = "Meow";
 	string gtext = "";
  	void worker(string text,bool t){
@@ -61,6 +61,9 @@ class Meow
 		else if(text == "exit"){
 			exit(0);
 		}
+		else if(text == "@set.show"){
+			cout<<meow;
+		}
 	 	else if(regex_match(text,rg_ucode)){
 	    	smatch value;
 	    	regex_search(text, value,rg_ucode);
@@ -102,9 +105,8 @@ class Meow
 					(*itr).second = input;
 				}
 			}
-
 	    }else{
-	    	cout<<"Error Command in this line \n=>"<<text<<endl;
+	    	cout<<"Error Command in this line \n=> "<<text<<endl;
 	    	if(t)
 	    		exit(0);
 	    }
@@ -132,7 +134,6 @@ vector<string> readfile(string text){
     vector<string> lines;
     while (getline(file, line)){
     	if(line != "")
-    		
     		lines.push_back(line); 
     }
     file.close();
@@ -149,7 +150,7 @@ void passive(){
 	string line;
     while (getline(file, line)){
 		if(line != "")
-    	 worker(line,true);
+    	 worker(line,false);
     }
 	}
 
@@ -160,6 +161,7 @@ void help(int v){
 				  "  -h              show this message \n"
 				  "  -v              print the version number\n"
 				  "  -e 'command'    one line of script\n"
+				  "  -p              findout pointer name\n"
 				  <<endl;
 	}else if(v==1){
 			cout<<"  .help show this message\n"
