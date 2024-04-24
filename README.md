@@ -28,3 +28,5 @@ chmod +x ./install.sh
 
 ``` @set.text() ```
 
+``` @set.show   ```
+
