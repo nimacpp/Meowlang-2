@@ -22,8 +22,8 @@ class Meow
  		regex rg_ucode(meow+".puts\\((.*)\\)");
 		regex rg_system(meow+".system\\((.*)\\)");
 		regex rg_range(meow+".1to\\(([0-9,]+)\\)");
-		regex rg_setting("@set ([a-zA-Z0-9]+)");
-		regex rg_text("@set.text\\((.*)\\)");
+		regex rg_setting("@crt ([a-zA-Z0-9]+)");
+		regex rg_text("@crt.text\\((.*)\\)");
 
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
@@ -61,7 +61,7 @@ class Meow
 		else if(text == "exit"){
 			exit(0);
 		}
-		else if(text == "@set.show"){
+		else if(text == "@crt.show"){
 			cout<<meow;
 		}
 	 	else if(regex_match(text,rg_ucode)){
