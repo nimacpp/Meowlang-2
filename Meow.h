@@ -7,24 +7,37 @@ using namespace std;
 class Meow
  {
  public:
- 	map<string,string> data = {{"VERSION","2.0.7"},{"PS1",">"}};
- 	string meow = "Meow";
+ 	map<string,string> data = {{"VERSION","2.1.0"},{"PS1",">"}};
+ 	string meow = "meow";
 	string gtext = "";
  	void worker(string text,bool t){
  		smatch m;
- 		if (regex_search(text, m, regex(R"((\$[[:alpha:]][[:alnum:]]*))")))
-        		text = text.replace(m[1].first,m[1].second,existV(std::string(m[1].first, m[1].second),data));
-		
-
+ 		/*if (regex_search(text, m, regex(R"((\$[[:alpha:]][[:alnum:]]*))")))
+        		text = text.replace(m[1].first,m[1].second,existV(std::string(m[1].first, m[1].second),data));*/
  		regex rg_filter("@"+meow+"(:on|:off|)");
  		regex rg_code(meow+".gets\\(([0-9,]+)\\)");
- 		regex rg_value("var.([a-zA-Z0-9]+) =[ ]{0,1}(.*)");
+ 		regex rg_value("var ([a-zA-Z0-9]+) =[ ]{0,1}(.*)");
  		regex rg_ucode(meow+".puts\\((.*)\\)");
 		regex rg_system(meow+".system\\((.*)\\)");
+		regex rg_print(meow+".print\\((.*)\\)");
 		regex rg_range(meow+".1to\\(([0-9,]+)\\)");
 		regex rg_setting("@crt ([a-zA-Z0-9]+)");
 		regex rg_text("@crt.text\\((.*)\\)");
+		regex rg_if("if (.*) : (.*)");
+		
 
+		/*
+		@Meow:(on|off)
+		meow.gets()
+		meow.puts()
+		meow.system()
+		meow.1to()
+		@crt *
+		@crt.text
+		@crt.show
+		exit
+
+		*/
 	 	if(regex_match(text,rg_code)){
 	 		smatch value;
 	    	regex_search(text, value,rg_code);
@@ -46,11 +59,30 @@ class Meow
 	 		smatch value;
 	    	regex_search(text, value,rg_text);
 			gtext = value[1];
+	 	}else if(regex_match(text,rg_print)){
+	 		smatch value;
+	    	regex_search(text, value,rg_print);
+			cout<<syntax(value[1]);
+	 	}
+		
+		else if(regex_match(text,rg_if)){
+			regex rg_equal("(.*) eq (.*)");
+	 		smatch value;smatch all;
+	    	regex_search(text, value,rg_if);
+			string v = value[1];
+			if(regex_match(v,all,rg_equal)){
+				if(syntax(all[1]) == syntax(all[2])){
+					worker(value[2],t);
+				}else {
+					for(auto x : all)
+						cout<<":"<<syntax(x)<<":"<<endl;
+				}
+			}
 	 	}
 	 	else if(regex_match(text,rg_system)){
 	 		smatch value;
 	    	regex_search(text, value,rg_system);
-	    	string s = value[1];
+	    	string s = syntax(value[1]);
 			system(s.c_str());
 	 	}
 		else if(regex_match(text,rg_setting)){
@@ -63,11 +95,13 @@ class Meow
 		}
 		else if(text == "@crt.show"){
 			cout<<meow;
+		}else if(text == "help"){
+			help(1);
 		}
 	 	else if(regex_match(text,rg_ucode)){
 	    	smatch value;
 	    	regex_search(text, value,rg_ucode);
-	    	string v = value[1];
+	    	string v = syntax(value[1]);
 	    	for(int i=0;i < v.length();i++){
 	    		//cout<<v[i];
 	    		//char c = v[i];  // Access the string representation and then the character
@@ -96,7 +130,7 @@ class Meow
 			if(value[2] == meow+".input"){
 				getline(cin,input);
 			}else
-				input = value[2];
+				input = syntax(value[2]);
 		    if(!exist(value[1],data))
 				data.insert({value[1],input});
 			else{
@@ -105,8 +139,11 @@ class Meow
 					(*itr).second = input;
 				}
 			}
-	    }else{
-	    	cout<<"Error Command in this line \n=> "<<text<<endl;
+	    }else if(syntax(text)!= "Error"){
+			cout<<syntax(text);
+		}
+		else{
+	    	cout<<"\e[31m[!]\e[0m Error Command in this line \n(\e[1mMeow\e[22m):in `<main>': \e[4m"<<text<<"\e[24m"<<endl;
 	    	if(t)
 	    		exit(0);
 	    }
@@ -155,6 +192,31 @@ void passive(){
 	}
 
 }
+void history(string text,bool read){
+	string path = GetEnv("HOME");
+	path = path+"/.Meow_history";
+	if(!read){
+	fstream file(path.c_str(),ios::app);
+	if(!file)
+		ofstream { path.c_str() };
+	else
+		file << text + "\n";
+	file.close();
+	}else{
+	ifstream file(path.c_str());
+	if(!file){
+		ofstream { path.c_str() };
+	}else{
+	string line;int i=1;
+    while (getline(file, line)){
+		if(line != ""){
+			cout<<i<<"|  "<<line<<endl;
+			i++;
+		}
+    }
+	}
+	}
+}
 void help(int v){
 	if(v == 0){
 	cout<<"Usage: Meow [--] [programfile] [arguments]\n"
@@ -164,23 +226,11 @@ void help(int v){
 				  "  -p              findout pointer name\n"
 				  <<endl;
 	}else if(v==1){
-			cout<<"  .help show this message\n"
-				  "  .exit Exit this program\n"
+			cout<<"help\t show this message\n"
 				  <<endl;
 
 	}
 }
-bool terminalcmd(string text){
-	if(text == ".exit")
-		exit(0);
-	else if(text == ".help")
-		help(1);
-	else
-		return false;
-	return true;
-
-}
-
 
 inline bool exists_ (const std::string& name) {
     ifstream f(name.c_str());
@@ -229,7 +279,8 @@ inline bool exists_ (const std::string& name) {
 	        tokens.push_back(token);
 	    }
 	    return tokens;
-	}bool exist(string text,map<string,string> data){
+	}
+bool exist(string text,map<string,string> data){
     for (auto itr = data.begin(); itr != data.end(); ++itr)
     {
     if (text == itr->first)
@@ -238,7 +289,8 @@ inline bool exists_ (const std::string& name) {
         }
     }
     return false;
-}string existV(string text,map<string,string> data){
+}
+/*string existV(string text,map<string,string> data){
 	text.erase(0,1);
     for (auto itr = data.begin(); itr != data.end(); ++itr)
     {
@@ -248,7 +300,18 @@ inline bool exists_ (const std::string& name) {
         }
     }
     return "$"+text;
-}int existL(string text,map<string,int> data){
+}*/
+string existV(string text,map<string,string> data){
+    for (auto itr = data.begin(); itr != data.end(); ++itr)
+    {
+    if (text == itr->first)
+        {
+            return itr->second;
+        }
+    }
+    return "";
+}
+int existL(string text,map<string,int> data){
 	//text.erase(0,1);
     for (auto itr = data.begin(); itr != data.end(); ++itr)
     {
@@ -281,6 +344,54 @@ int to_i(string str){
 	istringstream ( str ) >> i;
 	return i;
 }
+void strip(string str)
+{
+    if (str.length() != 0)
+    {
+        auto w = string(" ");
+        auto n = string("\n");
+        auto r = string("\t");
+        auto t = string("\r");
+        auto v = string(1, str.front());
+        while ((v == w) || (v == t) || (v == r) || (v == n))
+        {
+            str.erase(str.begin());
+            v = string(1, str.front());
+        }
+        v = string(1, str.back());
+        while ((v == w) || (v == t) || (v == r) || (v == n))
+        {
+            str.erase(str.end() - 1);
+            v = string(1, str.back());
+        }
+    }
+}
+string syntax(string text){
+    smatch value;
+    //cout<<"true01->"<<text;
+	regex sys("`(.*)`");
+    regex str("\'(.*)\'");
+    regex str1("\"(.*)\"");
+    regex nom("([0-9]+)");
+    if(regex_search(text,value,str)){
+        return value[1];
+    }else if(regex_search(text,value,str1)){
+        return value[1];    
+    }else if((text == "false")||(text == "true")){
+        return text;
+    }else if(regex_search(text,value,nom)){
+        return value[1];
+    }else if(exist(text,data)){
+        return existV(text,data);
+    }else if(regex_search(text,value,sys)){
+		string v = value[1];
+		v = sys_str(v.c_str());
+        v.pop_back(); 
+		return v;
+    }
+    else 
+        return "Error";
+}
 vector<string> split(string s, string delimiter)
 {
 
@@ -297,5 +408,20 @@ vector<string> split(string s, string delimiter)
     res.push_back(s.substr(pos_start));
     return res;
 }
-
+string sys_str(const char* cmd) {
+    char buffer[128];
+    string result = "";
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) throw runtime_error("popen() failed!");
+    try {
+        while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+            result += buffer;
+        }
+    } catch (...) { 
+        pclose(pipe);
+        throw;
+    }
+    pclose(pipe);
+    return result;
+}
 }; 

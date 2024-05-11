@@ -26,18 +26,20 @@ int main(int argc, char const *argv[])
 		}else if(ag == "-p"){
 			lang.passive();
 			cout<<"Pointer: "+lang.meow<<endl;
+		}else if(ag == "-his"){
+			lang.history("",true);
 		}
 		}
 		if(!argv[1]){
 			string test;
 			cout<<"Welcome to Meow v"+lang.data["VERSION"]+"\n"
-				  "Type \".help\" for more information.\n";
+				  "Type \"help\" for more information.\n";
 			lang.passive();
 			while(true){
 			cout<<lang.data["PS1"]+" ";
 			getline(cin,test);
-			if(!lang.terminalcmd(test))
-				lang.worker(test,false);
+			lang.history(test,false);
+			lang.worker(test,false);
 			cout<<endl;
 			}
 		}
